@@ -10,7 +10,9 @@ to use PyTorch in realtime C++-based applications. Here we adopted it for using 
 
 * Addon works with CPU only (not using CUDA), 64 bit mode.
 
-* Addon uses LibTorch 1.3.1 (downloaded from https://pytorch.org/get-started/locally/)
+* Addon uses LibTorch 1.3.1 (downloaded from https://pytorch.org/get-started/locally/).
+
+* Addon is added to your oF project by a regular way using Project Generator.
 
 
 ## Requirements
@@ -35,7 +37,7 @@ and back, use your Python's Pytorch data in the oF project!
 Using PyTorch C++ is explained here: https://pytorch.org/cppdocs/frontend.html
 
 
-## Visual Studio setup
+## Appendix: Visual Studio project setup for using LibTorch without oF
 
 All addon's setup should be made automatically by Project Generator.
 
