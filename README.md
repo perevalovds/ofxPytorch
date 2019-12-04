@@ -46,11 +46,21 @@ This example demonstrates the way for using files made in oF project in your Pyt
 and back, use your Python's Pytorch data in the oF project!
 (Note, actually **saved.tensor** is ZIP archive, which you can explore).
 
+* **example_rnn_classify** - example of creating simple character-level RNN 
+which is capable to classify names. This example doesn't uses optimizators,
+but rely on PyTorch's native autograd powerfullness.
+It's C++ reimplementation of PyTorch tutorial 
+"NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
+https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
+https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
+
+
 
 ## PyTorch C++ documentation 
 
-Using PyTorch C++ is explained here: https://pytorch.org/cppdocs/frontend.html
-
+Using PyTorch C++ is explained here: 
+* https://pytorch.org/cppdocs/index.html
+* https://pytorch.org/cppdocs/frontend.html
 
 ## Appendix: Visual Studio project setup for using LibTorch without oF
 
