@@ -39,12 +39,12 @@ The ZIP has the following structure:
 
 ## Examples
 
-* *example_test* - minimalistic example to check PyTorch is linked properly. 
+* **example_test** - minimalistic example to check PyTorch is linked properly. 
 It's based on https://pytorch.org/cppdocs/installing.html#minimal-example
-The example creates a random tensor, prints it in Console and saves to *data* folder as *saved.tensor* file.
+The example creates a random tensor, prints it in Console and saves to **data** folder as **saved.tensor** file.
 This example demonstrates the way for using files made in oF project in your Python's Pytorch code, 
 and back, use your Python's Pytorch data in the oF project!
-(Note, actually *saved.tensor* is ZIP archive, which you can explore).
+(Note, actually **saved.tensor** is ZIP archive, which you can explore).
 
 
 ## PyTorch C++ documentation 
@@ -69,9 +69,9 @@ so this notes may be useful (also, you can see them implemented in addon_config.
 4. Copy to project's bin the following DLLs: libiomp5md.dll, libiompstubs5md.dll, torch.dll
 (and others if required).
 
-To implement this in addon's settings, the *libtorch* library .H and .LIB files
-are placed not in addon's regular *libs* folder, 
-but in *libs_* folder to prevent Project Generator from automatically including 
+To implement this in addon's settings, the **libtorch** library .H and .LIB files
+are placed not in addon's regular **libs** folder, 
+but in **libs_** folder to prevent Project Generator from automatically including 
 unnecessary libtorch's subfolders into Visual Studio project's includes.
 
-However, libtorch's DLLS are placed in libs folder to be copied into your project's *bin* automatically.
+However, libtorch's DLLS are placed in libs folder to be copied into your project's **bin** automatically.
