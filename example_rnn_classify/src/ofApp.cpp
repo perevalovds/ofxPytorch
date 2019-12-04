@@ -1,6 +1,50 @@
 
 #include "ofApp.h"
 
+// Define a new Module.
+// input    hidden
+//    combined
+//  i2o       i2h
+// softmax
+// output   hidden
+
+//https://pytorch.org/cppdocs/frontend.html
+struct Net : torch::nn::Module {
+	//We need to declare modules in this way and create in constructor for reference-type using
+	torch::nn::Linear i2o{ nullptr }, i2h{ nullptr };
+
+	int input_size, hidden_size, output_size;
+
+	Net(int input_size, int hidden_size, int output_size) {
+		this->input_size = input_size;
+		this->hidden_size = hidden_size;
+		this->output_size = output_size;
+
+		i2o = register_module("i2o", torch::nn::Linear(input_size + hidden_size, output_size));
+		i2h = register_module("i2h", torch::nn::Linear(input_size + hidden_size, hidden_size));
+
+	}
+
+	// Implement the Net's algorithm.
+	torch::Tensor forward(torch::Tensor input, torch::Tensor hidden) {
+		torch::Tensor combined = torch::cat((input, hidden), 1);
+		hidden = i2h->forward(combined);
+		torch::Tensor output = i2o->forward(combined);
+		output = torch::log_softmax(output, /*dim=*/1);
+		return (output, hidden);
+
+		/*	def initHidden(self) :
+			return torch.zeros(1, self.hidden_size)
+			*/
+		// Use one of many tensor manipulation functions.
+		//x = torch::relu(fc1->forward(x.reshape({ x.size(0), 784 })));
+		//x = torch::dropout(x, /*p=*/0.5, /*train=*/is_training());
+		//x = torch::relu(fc2->forward(x));
+		//x = torch::log_softmax(fc3->forward(x), /*dim=*/1);
+		//return x;
+	}
+
+};
 
 //--------------------------------------------------------------
 void ofApp::setup(){
