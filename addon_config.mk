@@ -7,24 +7,22 @@ meta:
 
 common:
 
-	ADDON_INCLUDES_EXCLUDE += libs
-	ADDON_SOURCES_EXCLUDE += libs
-	ADDON_INCLUDES +=  libs/libtorch/include
-	ADDON_INCLUDES +=  libs/libtorch/include/torch/csrc/api/include
+	ADDON_INCLUDES +=  libs_/libtorch/include
+	ADDON_INCLUDES +=  libs_/libtorch/include/torch/csrc/api/include
 
 osx:
 vs:	
 	# x64
-	ADDON_LIBS += libs/libtorch/lib/caffe2.lib
-	ADDON_LIBS += libs/libtorch/lib/c10.lib  
-	ADDON_LIBS += libs/libtorch/lib/torch.lib  
+	#ADDON_LIBS += libs_/libtorch/lib/caffe2.lib
+	ADDON_LIBS += libs_/libtorch/lib/c10.lib  
+	ADDON_LIBS += libs_/libtorch/lib/torch.lib  
 
-	ADDON_DLLS_TO_COPY += libs/libtorch/lib/c10.dll
-	#ADDON_DLLS_TO_COPY += libs/libtorch/lib/caffe2_detectron_ops.dll
-	#ADDON_DLLS_TO_COPY += libs/libtorch/lib/caffe2_module_test_dynamic.dll
-	ADDON_DLLS_TO_COPY += libs/libtorch/lib/libiomp5md.dll
-	ADDON_DLLS_TO_COPY += libs/libtorch/lib/libiompstubs5md.dll
-	ADDON_DLLS_TO_COPY += libs/libtorch/lib/torch.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/c10.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/caffe2_detectron_ops.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/caffe2_module_test_dynamic.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/libiomp5md.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/libiompstubs5md.dll
+	#ADDON_DLLS_TO_COPY += libs/dlls/torch.dll
 	
 linux64:
 linuxarmv6l:

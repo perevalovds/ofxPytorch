@@ -3,7 +3,7 @@
 
 #include "ofMain.h"
 
-#include <torch/torch.h>
+#include "ofxPytorch.h"
 
 
 

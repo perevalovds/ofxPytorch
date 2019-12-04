@@ -12,11 +12,14 @@ void ofApp::setup(){
 	//std::cout << c << std::endl;
 
 	torch::Tensor tensor = torch::rand({ 2, 3 });
+	cout << "Tensor:" << endl;
 	cout << tensor << std::endl;
 
 	string file_name = "saved.tensor";
 	torch::save(tensor, ofToDataPath(file_name));
-	cout << "tensor saved to " << file_name << endl;
+
+	cout << endl;
+	cout << "PyTorch works well, the created tensor was saved to '" << file_name << "'" << endl;
 
 }
 
