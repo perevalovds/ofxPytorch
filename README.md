@@ -25,7 +25,8 @@ to use PyTorch in realtime C++-based applications. Here we adopted it for using 
 
 1. Please install addon to oF's *addons* folder.
 
-2. Download LibTorch's .H, .LIB and .DLL files as a ZIP archive from *releases* of this repository: https://github.com/perevalovds/ofxPytorch/releases
+2. Download LibTorch's .H, .LIB and .DLL files as a ZIP archive named *ofxPytorch_libs_win_64_CPU.zip*
+from *releases* of this repository: https://github.com/perevalovds/ofxPytorch/releases
 
 3. Unpack this ZIP into the addon's folder (we can't add it to the github directly because of limit on the file size).
 The ZIP has the following structure:
