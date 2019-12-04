@@ -1,6 +1,6 @@
 # ofxPytorch
 
-ofxPytorch is an addon for openFrameworks, made by Denis Perevalov.
+**ofxPytorch** is an addon for openFrameworks, made by Denis Perevalov.
 It allows to use PyTorch machine learning capabilities in your (C++) openFrameworks projects. 
 
 PyTorch is a very powerful and popular ML library. Its C++ frontend named LibTorch allows 
@@ -23,15 +23,15 @@ to use PyTorch in realtime C++-based applications. Here we adopted it for using 
 
 ## Installing
 
-1. Please install addon to oF's *addons* folder.
+1. Please install addon to oF's **addons** folder.
 
-2. Download LibTorch's .H, .LIB and .DLL files as a ZIP archive named *ofxPytorch_libs_win_64_CPU.zip*
-from *releases* of this repository: https://github.com/perevalovds/ofxPytorch/releases
+2. Download LibTorch's .H, .LIB and .DLL files as a ZIP archive named **ofxPytorch_libs_win_64_CPU.zip**
+from **releases** of this repository: https://github.com/perevalovds/ofxPytorch/releases
 
 3. Unpack this ZIP into the addon's folder (we can't add it to the github directly because of limit on the file size).
 The ZIP has the following structure:
-* libs_/libtorch - .H and .LIB files from LibTorch 1.3.1 (https://pytorch.org/get-started/locally/) excluding DLLs.
-* libs/dlls - DLLs from LibTorch 1.3.1
+* **libs_/libtorch** - .H and .LIB files from LibTorch 1.3.1 (https://pytorch.org/get-started/locally/) excluding DLLs.
+* **libs/dlls** - DLLs from LibTorch 1.3.1
 
 (See Appendix below for explanation).
 
