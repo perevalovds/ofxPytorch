@@ -63,15 +63,21 @@ https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
 ## PyTorch C++ documentation 
 
 Using PyTorch C++ is explained here: 
+* "Using the PyTorch C++ Frontend" tutorial: https://pytorch.org/tutorials/advanced/cpp_frontend.html
 * All documentation: https://pytorch.org/cppdocs/index.html
 * High-level frontend documentation: https://pytorch.org/cppdocs/frontend.html
-* Tutorial and detailed explanation: https://pytorch.org/tutorials/advanced/cpp_frontend.html
 * Working with tensors: https://pytorch.org/cppdocs/notes/tensor_basics.html
 https://pytorch.org/cppdocs/notes/tensor_creation.html
+* Tests - serves as examples: https://github.com/pytorch/pytorch/tree/master/test/cpp/api
+
+Other:
 * Library API: https://pytorch.org/cppdocs/api/library_root.html
 * Library API/torch::nn: https://pytorch.org/cppdocs/api/namespace_torch__nn.html
-* (Not C++, but Python's) torch module documentation (explanation of 'cat', 'stack' and other functions) https://pytorch.org/docs/stable/torch.html
+* (Python) torch module documentation (explanation of 'cat', 'stack' and other functions) https://pytorch.org/docs/stable/torch.html
 
+* (Python) nn module documentation (NLLLoss and others) https://pytorch.org/docs/stable/nn.html
+
+* (Python) Pytorch ML tutorials: https://pytorch.org/tutorials/index.html
 
 ## Appendix: Visual Studio project setup for using LibTorch without oF
 

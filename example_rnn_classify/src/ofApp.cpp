@@ -1,72 +1,17 @@
 
 #include "ofApp.h"
+#include "RNN.h"
 
 //The Python code from this RNN tutorial:
 //https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 //is translated into C++ code using Pytorch C++ frontend documentation:
 //https://pytorch.org/cppdocs/frontend.html
 
-// Define a new Module.
-//"RNN module(mostly copied from the PyTorch for Torch users tutorial) 
-//is just 2 linear layers which operate on an input and hidden state, 
-//with a LogSoftmax layer after the output."
-// input    hidden
-//    combined
-//  i2o       i2h
-// softmax
-// output   hidden
-struct RNN : torch::nn::Module {
-	//We need to declare modules in this way and create in constructor for reference-type using
-	torch::nn::Linear i2o{ nullptr }, i2h{ nullptr };
 
-	int input_size, hidden_size, output_size;
-
-	torch::Tensor hidden;	
-	//Note: we store hidden state here,
-	//but not registering, so looks like it will be not saved using 
-	//torch::save(rnn, ofToDataPath("net.pt"));
-
-
-	RNN(int input_size, int hidden_size, int output_size) {
-		this->input_size = input_size;
-		this->hidden_size = hidden_size;
-		this->output_size = output_size;
-
-		i2o = register_module("i2o", torch::nn::Linear(input_size + hidden_size, output_size));
-		i2h = register_module("i2h", torch::nn::Linear(input_size + hidden_size, hidden_size));
-
-		initHidden();
-	}
-
-	// Implement the RNN algorithm.
-	torch::Tensor forward(torch::Tensor input) {
-		torch::Tensor combined = torch::cat({ input, hidden }, 1);
-		hidden = i2h->forward(combined);
-		torch::Tensor output = i2o->forward(combined);
-		output = torch::log_softmax(output, /*dim=*/1);
-		return output;
-
-		//Note: we put hidden inside the net,
-		//but in origial example output is Python's [output, hidden]
-		//to deal with it, use output as std::tuple<torch::Tensor, torch::Tensor>
-		//also see how we work with tuples in categoryFromOutput() function definition below
-	}
-
-	//Initialize hidden state
-	void initHidden() {
-		hidden = torch::zeros({ 1, hidden_size });
-	}
-
-		//x = torch::relu(fc1->forward(x.reshape({ x.size(0), 784 })));
-		//x = torch::dropout(x, /*p=*/0.5, /*train=*/is_training());
-		//x = torch::relu(fc2->forward(x));
-		//x = torch::log_softmax(fc3->forward(x), /*dim=*/1);
-	
-
-};
-
-//Declare RNN object
+//Declare RNN object 
+//RNN is defined in RNN.h
 std::shared_ptr<RNN> rnn;
+
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -102,26 +47,42 @@ void ofApp::setup(){
 	//cout << "lineToTensor test " << endl << test << endl;
 
 	//Create RNN
-	//('net' variable is defined above)
-	n_hidden = 128;
+	//('rnn' variable is defined above)
+	cout << "Creating network..." << endl;
+	n_hidden = //128;
+		5;	//TEST
 	rnn = std::make_shared<RNN>(n_letters, n_hidden, n_categories);
 
 	//Test processing one symbol
 	/*cout << "Test processing one symbol" << endl;
 	auto input = lineToTensor("Albert");
-
-	rnn->initHidden();	
-	auto output = rnn->forward(input[0]);
-	
+	auto hidden = rnn->initHidden();	
+	auto pair = rnn->forward(input[0], hidden);
+	auto splitted = pair.split_with_sizes({ rnn->output_size, rnn->hidden_size }, 1);
+	auto output = splitted[0];
+	hidden = splitted[1];
 	cout << "output " << output << endl;
-	cout << "hidden " << rnn->hidden << endl;
-	
+	cout << "hidden " << hidden << endl;
 	cout << "result: " << categoryFromOutput(output) << endl;
 	*/
 
-	//torch::Tensor tensor = torch::randint(20, {2, 3});
+	//Test generating random example
+	/*
+	cout << "Generating example..." << endl;
+	TrainingExample ex = randomTrainingExample();
+	cout << "example: " << categories[ex.category] << " " << ex.line << endl;
+	//cout << ex.category_tensor << endl;
+	//cout << ex.line_tensor << endl;
+	*/
 
-	//save the net - except hidden ?: torch::save(rnn, ofToDataPath("rnn.pt"));
+	//Test train step
+	/*
+	cout << "Train step..." << endl;
+	train_step();
+	*/
+
+
+	//save the net - probably without 'hidden' value - torch::save(rnn, ofToDataPath("rnn.pt"));
 }
 
 
@@ -152,6 +113,76 @@ int ofApp::categoryFromOutput(torch::Tensor output) {
 	torch::Tensor index = std::get<1>(result);
 	return index.item<float>();
 
+}
+
+//--------------------------------------------------------------
+//Generate random example
+ofApp::TrainingExample ofApp::randomTrainingExample() {
+	int cat = torch::randint(n_categories, { 1 }).item<int>();
+	auto &lines = category_lines[cat];
+
+	int i = torch::randint(lines.size(), { 1 }).item<int>();
+
+	TrainingExample ex;
+	ex.category = cat;
+	ex.line = lines[i];
+	ex.category_tensor = torch::tensor({ cat }, torch::kLong);
+	ex.line_tensor = lineToTensor(ex.line);
+
+	return ex;
+}
+
+
+//--------------------------------------------------------------
+/*
+Training is implemented directly, without optimizers
+"Each loop of training will:
+	Create input and target tensors
+	Create a zeroed initial hidden state
+	Read each letter in and
+		Keep hidden state for next letter
+	Compare final output to target
+	Back-propagate
+	Return the output and loss"
+*/
+void ofApp::train_step() {
+	TrainingExample ex = randomTrainingExample();
+
+	float learning_rate = 0.005; //"If you set this too high, it might explode.If too low, it might not learn"
+
+	rnn->zero_grad();
+	torch::Tensor output;
+	torch::Tensor hidden = rnn->initHidden();
+
+	for (int i = 0; i < ex.line_tensor.size(0); i++) {
+		torch::Tensor pair = rnn->forward(ex.line_tensor[i], hidden);
+		auto splitted = pair.split_with_sizes({ rnn->output_size, rnn->hidden_size }, 1);
+		output = splitted[0];
+		hidden = splitted[1];
+		//break;//TEST
+	}
+	//cout << "output " << output << endl;
+	//cout << "hidden " << hidden << endl;
+
+	//NLL - negative log-likelihood, https://pytorch.org/docs/stable/nn.html
+	torch::Tensor loss = torch::nll_loss(output, ex.category_tensor);
+
+	//compute gradient
+	loss.backward();
+
+	//"Add parameters' gradients to their values, multiplied by learning rate"
+	for (auto &p : rnn->parameters()) {
+		if (!p.grad().defined()) {
+			cout << "ERROR in train_step: empty parameter! It looks like something wrong with network structure" << endl;
+			OF_EXIT_APP(0);
+		}
+		if (p.grad().defined()) {
+			p.data().add_(p.grad().data(), torch::Scalar(-learning_rate));	//add_ - "_" means that object calling the function will be changed
+		}
+	}
+
+
+	//return output, loss.item()
 }
 
 //--------------------------------------------------------------

@@ -14,6 +14,9 @@ https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
 #include "ofMain.h"
 #include "ofxPytorch.h"
 
+
+
+
 class ofApp : public ofBaseApp {
 
 public:
@@ -54,4 +57,17 @@ public:
 	//Interpret the output of the network, which we know to be a likelihood of each category
 	int categoryFromOutput(torch::Tensor output); 
 	
+	//Generate random example
+	struct TrainingExample {
+		int category = 0;
+		string line;
+		torch::Tensor category_tensor;
+		torch::Tensor line_tensor;
+	};
+	TrainingExample randomTrainingExample();	
+
+	//Train
+	//training is implemented directly, without optimizers
+	//on one sample (no mini-batches used)
+	void train_step();
 };
