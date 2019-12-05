@@ -35,16 +35,23 @@ public:
 
 
 	//train data
-	int n_categories = 0;	//number of categories	
+	int n_categories;	//number of categories	
 	vector<string> categories;	//category's name
 	vector<vector<string> > category_lines;	//examples of names for category
 
 	//letters
-	int n_letters = 0;
+	int n_letters;
 	string all_letters;
+
+	//number of hidden states
+	int n_hidden;
+
 
 	//Turn a line into a <line_length x 1 x n_letters>,
 	//or an array of one-hot letter vectors
 	torch::Tensor lineToTensor(string line);
 
+	//Interpret the output of the network, which we know to be a likelihood of each category
+	int categoryFromOutput(torch::Tensor output); 
+	
 };

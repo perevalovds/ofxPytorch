@@ -8,11 +8,16 @@ to use PyTorch in realtime C++-based applications. Here we adopted it for using 
 
 ## Addon's Features
 
-* Addon works with CPU only (not using CUDA), 64 bit mode.
+* Addon is added to your oF project by a regular way using Project Generator.
+
+* Addon works with CPU only (not using CUDA).
+
+* Addon must be compiled in **64 bit, Release mode** only (no Debug mode currently allowed)
+The reason: "on Windows, debug and release builds are not ABI-compatible" - https://pytorch.org/tutorials/advanced/cpp_frontend.htmlfor,
+so for Debug mode you need to use debug version of LibTorch.
 
 * Addon uses LibTorch 1.3.1 (downloaded from https://pytorch.org/get-started/locally/).
 
-* Addon is added to your oF project by a regular way using Project Generator.
 
 
 ## Requirements
@@ -34,7 +39,6 @@ The ZIP has the following structure:
 * **libs/dlls** - DLLs from LibTorch 1.3.1
 
 (See Appendix below for explanation).
-
 
 
 ## Examples
@@ -59,8 +63,15 @@ https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
 ## PyTorch C++ documentation 
 
 Using PyTorch C++ is explained here: 
-* https://pytorch.org/cppdocs/index.html
-* https://pytorch.org/cppdocs/frontend.html
+* All documentation: https://pytorch.org/cppdocs/index.html
+* High-level frontend documentation: https://pytorch.org/cppdocs/frontend.html
+* Tutorial and detailed explanation: https://pytorch.org/tutorials/advanced/cpp_frontend.html
+* Working with tensors: https://pytorch.org/cppdocs/notes/tensor_basics.html
+https://pytorch.org/cppdocs/notes/tensor_creation.html
+* Library API: https://pytorch.org/cppdocs/api/library_root.html
+* Library API/torch::nn: https://pytorch.org/cppdocs/api/namespace_torch__nn.html
+* (Not C++, but Python's) torch module documentation (explanation of 'cat', 'stack' and other functions) https://pytorch.org/docs/stable/torch.html
+
 
 ## Appendix: Visual Studio project setup for using LibTorch without oF
 
