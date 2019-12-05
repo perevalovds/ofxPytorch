@@ -135,27 +135,28 @@ void ofApp::menu() {
 		cout << "        (" << state_message << ")" << endl;
 		cout << ">>> ";
 
-		int key;
+		string key;
 		cin >> key;
 		cout << endl;
-		if (key == 1) {
+		if (key == "1") {
 			cout << "Train..." << endl;
 			train();
 			state_message = "Network is trained, but not saved to file";
 		}
 		string file_name = "rnn.pt";
-		if (key == 2) {
+		if (key == "2") {
 			cout << "Saving network to " << file_name << " ..." << endl;
 			torch::save(rnn, ofToDataPath(file_name));
 			state_message = "Network is saved";
 		}
-		if (key == 3) {
+		if (key == "3") {
 			cout << "Loading network from " << file_name << " ..." << endl;
 			torch::load(rnn, ofToDataPath(file_name));
 			state_message = "Network is loaded";
 		}
-		if (key == 4) {
+		if (key == "4") {
 			cout << "Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):" << endl;
+			cout << "        (" << state_message << ")" << endl;
 			cout << ">>> ";
 			string line;
 			cin >> line;
@@ -164,7 +165,7 @@ void ofApp::menu() {
 			//This function returns list of results, but we ignoring it here,
 			//but can be useful in other situations
 		}
-		if (key == 5) {
+		if (key == "5") {
 			cout << "Exiting..." << endl;
 			OF_EXIT_APP(0);
 		}
