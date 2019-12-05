@@ -1,14 +1,34 @@
 #pragma once
 
 /*
-example_rnn_classify - example of creating simple character-level RNN 
-which is capable to classify names. This example doesn't uses optimizators,
+example_rnn_classify - this is matured example of creating simple character-level RNN 
+which is capable to classify names by countries. This example doesn't uses optimizators,
 but rely on PyTorch's native autograd powerfullness.
 
-It's C++-ported and modified version of RNN's PyTorch (Python) tutorial
+It's C++-ported and modified version of RNN's PyTorch (Python) tutorial  
 "NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
 https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
+
+Our implementation of the example includes interactive menu, 
+allowing you to train, save, load and test network.
+
+For example, 'Perevalov' is not in training database, but is correctly classified as 'Russian':
+
+```
+Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):
+        (Network is loaded)
+>>> Perevalov
+Predict: 'Perevalov'
+     -0.312548  Russian
+     -2.70598  Greek
+     -2.94786  Czech
+```
+
+The technology of the example can be used for various text classification tasks,
+such as defining the language of the text and detecting blogger by article's title
+(see more info on this at original tutorial https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html)
+
 */
 
 #include "ofMain.h"
