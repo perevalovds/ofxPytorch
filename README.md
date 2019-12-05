@@ -51,13 +51,25 @@ and back, use your Python's Pytorch data in the oF project!
 (Note, actually **saved.tensor** is ZIP archive, which you can explore).
 
 * **example_rnn_classify** - example of creating simple character-level RNN 
-which is capable to classify names. This example doesn't uses optimizators,
+which is capable to classify names by countries. This example doesn't uses optimizators,
 but rely on PyTorch's native autograd powerfullness.
-It's C++ reimplementation of PyTorch tutorial 
+
+It's C++-ported and modified version of RNN's PyTorch (Python) tutorial  
 "NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
 https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
 
+Our implementation of the RNN includes interactive dialog, there you can load trained RNN 
+from a file and input your names to test:
+
+```
+Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):
+>>> Kabakov
+Predict: 'Kabakov'
+     -0.0211274  Russian
+     -4.0896  Greek
+     -6.64064  Czech
+```
 
 
 ## PyTorch C++ documentation 

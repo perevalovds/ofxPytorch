@@ -1,4 +1,4 @@
-
+﻿
 #include "ofApp.h"
 #include "RNN.h"
 
@@ -12,29 +12,12 @@
 //RNN is defined in RNN.h
 std::shared_ptr<RNN> rnn;
 
+//holder for network state text
+string state_message = "Network is randomly inited. You can load trained network from a file";
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 	cout << "Example of creating simple character-level RNN which is capable to classify names" << endl;
-
-	//Reading train data - examples of names for different countries
-	ofDirectory dir;
-	n_categories = dir.listDir("names_ansi");
-	cout << "Categories: " << n_categories << endl;
-
-	categories.resize(n_categories);
-	category_lines.resize(n_categories);
-
-	for (int i = 0; i < n_categories; i++) {
-		categories[i] = ofFilePath::removeExt(dir.getName(i));
-
-		//Parse the file
-		ofBuffer buffer = ofBufferFromFile(dir.getPath(i));
-		for (auto it : buffer.getLines()) {
-			category_lines[i].push_back(it);
-		}
-		cout << "  " << i + 1 << ": " << categories[i] << " " << category_lines[i].size() << endl;
-	}
 
 	//Construct list of all letters
 	//https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification/data.py
@@ -42,16 +25,60 @@ void ofApp::setup(){
 	all_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'-";
 	n_letters = all_letters.length();
 
+	//--------------------------------------------------------------
+	//Reading train data - examples of names for different countries
+	//--------------------------------------------------------------
+	ofDirectory dir;
+	n_categories = dir.listDir("names_ansi");
+	cout << "Categories: " << n_categories << endl;
+
+	categories.resize(n_categories);
+	category_lines.resize(n_categories);
+
+	bool error = false;
+	for (int i = 0; i < n_categories; i++) {
+		categories[i] = ofFilePath::removeExt(dir.getName(i));
+
+		//Parse the file
+		ofBuffer buffer = ofBufferFromFile(dir.getPath(i));
+		int k = 0;
+		for (auto line : buffer.getLines()) {
+			k++;
+			if (!checkWord(line)) {
+				cout << "Error in " << dir.getName(i) << ", bad word " << k << " '" << line << "'" << endl;
+				error = true;
+			}
+			category_lines[i].push_back(line);
+		}
+		cout << "    " << i + 1 << ": " << categories[i] << " " << category_lines[i].size() << endl;
+	}
+
+	if (error) {
+		cout << "Exiting due error in input data..." << endl;
+		OF_EXIT_APP(0);
+	}
+
+	//--------------------------------------------------------------
+	//Create RNN
+	//('rnn' variable is defined above)
+	//--------------------------------------------------------------
+	cout << "Creating network..." << endl;
+	n_hidden = 128;
+		
+	rnn = std::make_shared<RNN>(n_letters, n_hidden, n_categories);
+
+	//--------------------------------------------------------------
+	//Run interaction with user.
+	//--------------------------------------------------------------
+	//This is infinite loop
+	menu();
+
+	//-----------------------------------------------------------
+	//Here is various tests - uncomment to test what you want, and comment "menu();" above
+	//-----------------------------------------------------------
 	//Test lineToTensor
 	//auto test = lineToTensor("abc");
 	//cout << "lineToTensor test " << endl << test << endl;
-
-	//Create RNN
-	//('rnn' variable is defined above)
-	cout << "Creating network..." << endl;
-	n_hidden = //128;
-		5;	//TEST
-	rnn = std::make_shared<RNN>(n_letters, n_hidden, n_categories);
 
 	//Test processing one symbol
 	/*cout << "Test processing one symbol" << endl;
@@ -78,13 +105,88 @@ void ofApp::setup(){
 	//Test train step
 	/*
 	cout << "Train step..." << endl;
-	train_step();
+	TrainingExample ex = randomTrainingExample();
+	float loss = train_step(ex);
+	cout << "  loss " << loss << endl;
 	*/
 
+	//Train
+	/*
+	cout << "Training..." << endl;
+	train();
+	*/
 
-	//save the net - probably without 'hidden' value - torch::save(rnn, ofToDataPath("rnn.pt"));
+	//Predict
+	//auto items = predict("Kabakov");
 }
 
+
+//--------------------------------------------------------------
+//User interaction via console, infinite loop
+void ofApp::menu() {
+	while (true) {
+		cout << endl;
+		cout << "    Select action: " << endl;
+		cout << "        1 - train network (you can repeat it to train incrementally)" << endl;
+		cout << "        2 - save network" << endl;
+		cout << "        3 - load network" << endl;
+		cout << "        4 - predict (enter a name to predict its country)" << endl;
+		cout << "        5 - exit" << endl;
+		cout << "        (" << state_message << ")" << endl;
+		cout << ">>> ";
+
+		int key;
+		cin >> key;
+		cout << endl;
+		if (key == 1) {
+			cout << "Train..." << endl;
+			train();
+			state_message = "Network is trained, but not saved to file";
+		}
+		string file_name = "rnn.pt";
+		if (key == 2) {
+			cout << "Saving network to " << file_name << " ..." << endl;
+			torch::save(rnn, ofToDataPath(file_name));
+			state_message = "Network is saved";
+		}
+		if (key == 3) {
+			cout << "Loading network from " << file_name << " ..." << endl;
+			torch::load(rnn, ofToDataPath(file_name));
+			state_message = "Network is loaded";
+		}
+		if (key == 4) {
+			cout << "Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):" << endl;
+			cout << ">>> ";
+			string line;
+			cin >> line;
+			int n_predictions = 3;
+			predict(line, n_predictions);
+			//This function returns list of results, but we ignoring it here,
+			//but can be useful in other situations
+		}
+		if (key == 5) {
+			cout << "Exiting..." << endl;
+			OF_EXIT_APP(0);
+		}
+	}
+}
+
+
+//--------------------------------------------------------------
+//Check if word is correct (contains only registered symbols)
+bool ofApp::checkWord(string line) {
+	if (line.empty()) {		//we doesn't allow empty words
+		return false;
+	}
+	for (int i = 0; i < line.length(); i++) {
+		size_t index = all_letters.find_first_of(line[i]);
+		//cout << "index " << index << endl;
+		if (index == string::npos) {
+			return false;
+		}
+	}
+	return true;
+}
 
 //--------------------------------------------------------------
 //Turn a line into a <line_length x 1 x n_letters>,
@@ -107,8 +209,11 @@ torch::Tensor ofApp::lineToTensor(string line) {
 //--------------------------------------------------------------
 //Interpret the output of the network, which we know to be a likelihood of each category
 int ofApp::categoryFromOutput(torch::Tensor output) {
-	std::tuple<torch::Tensor, torch::Tensor> result = output.topk(1);
-	//retuls[0] holds value, result[1] holds index
+	//Getting best result
+	int count = 1;
+	std::tuple<torch::Tensor, torch::Tensor> result = output.topk(count);
+	
+	//result[0] holds value, result[1] holds index
 	//cout << "categoryFromOutput " << endl << std::get<0>(result) << " " << std::get<1>(result) << endl;
 	torch::Tensor index = std::get<1>(result);
 	return index.item<float>();
@@ -132,10 +237,11 @@ ofApp::TrainingExample ofApp::randomTrainingExample() {
 	return ex;
 }
 
-
 //--------------------------------------------------------------
 /*
 Training is implemented directly, without optimizers
+Function returns loss.
+
 "Each loop of training will:
 	Create input and target tensors
 	Create a zeroed initial hidden state
@@ -145,8 +251,7 @@ Training is implemented directly, without optimizers
 	Back-propagate
 	Return the output and loss"
 */
-void ofApp::train_step() {
-	TrainingExample ex = randomTrainingExample();
+float ofApp::train_step(TrainingExample &ex) {
 
 	float learning_rate = 0.005; //"If you set this too high, it might explode.If too low, it might not learn"
 
@@ -181,8 +286,76 @@ void ofApp::train_step() {
 		}
 	}
 
+	return loss.item<float>();
+}
 
-	//return output, loss.item()
+
+//--------------------------------------------------------------
+vector<ofApp::PredictResult> ofApp::predict(string line, int n_predictions) {
+	cout << "Predict: '" << line << "'" << endl;
+	if (!checkWord(line)) {
+		cout << "Bad word, please use Latin symbols only" << endl;
+		return vector<ofApp::PredictResult>();
+	}
+
+	auto line_tensor = lineToTensor(line);
+
+	rnn->zero_grad();
+	torch::Tensor output;
+	torch::Tensor hidden = rnn->initHidden();
+
+	for (int i = 0; i < line_tensor.size(0); i++) {
+		torch::Tensor pair = rnn->forward(line_tensor[i], hidden);
+		auto splitted = pair.split_with_sizes({ rnn->output_size, rnn->hidden_size }, 1);
+		output = splitted[0];
+		hidden = splitted[1];
+	}
+
+	std::tuple<torch::Tensor, torch::Tensor> result = output.topk(n_predictions);
+	//result[0] holds values, result[1] holds indices
+
+	//cout << "prediction values:" << endl
+	//	<< std::get<0>(result) << endl
+	//	<< " categories:" << endl
+	//	<< std::get<1>(result) << endl;
+		
+	vector<ofApp::PredictResult> items(n_predictions);
+	for (int i = 0; i < n_predictions; i++) {
+		auto &item = items[i];
+		item.value = std::get<0>(result)[0][i].item<float>();
+		int cat = std::get<1>(result)[0][i].item<int>();
+		item.category = categories[cat];
+
+		cout << "     " << item.value << "  " << item.category << endl;
+	}
+
+	return items;
+}
+
+
+
+
+//--------------------------------------------------------------
+void ofApp::train() {
+	int n_iters = //100000;
+		10000;				
+	int print_every = 1000;
+	float time0 = ofGetElapsedTimef();
+	float current_loss = 0;
+	for (int i = 0; i < n_iters; i++) {
+		TrainingExample ex = randomTrainingExample();
+		float loss = train_step(ex);
+		current_loss += loss;
+		if ((i + 1) % print_every == 0) {
+			float time = ofGetElapsedTimef();
+			int elapsed = int(time - time0);
+			cout << "    " << i + 1 << "/" << n_iters 
+				<< "\t" << (i+1)*100/n_iters << "%" 
+				<< "\t" << elapsed << " sec"
+				<< "\tmean loss " << current_loss / print_every << endl;
+			current_loss = 0;
+		}
+	}
 }
 
 //--------------------------------------------------------------

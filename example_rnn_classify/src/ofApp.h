@@ -5,7 +5,7 @@ example_rnn_classify - example of creating simple character-level RNN
 which is capable to classify names. This example doesn't uses optimizators,
 but rely on PyTorch's native autograd powerfullness.
 
-It's C++ reimplementation of PyTorch tutorial 
+It's C++-ported and modified version of RNN's PyTorch (Python) tutorial
 "NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
 https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
@@ -50,6 +50,9 @@ public:
 	int n_hidden;
 
 
+	//Check if word is correct (contains only registered symbols)
+	bool checkWord(string line);
+
 	//Turn a line into a <line_length x 1 x n_letters>,
 	//or an array of one-hot letter vectors
 	torch::Tensor lineToTensor(string line);
@@ -66,8 +69,24 @@ public:
 	};
 	TrainingExample randomTrainingExample();	
 
-	//Train
-	//training is implemented directly, without optimizers
-	//on one sample (no mini-batches used)
-	void train_step();
+	//Train step
+	//Training is implemented directly, without optimizers
+	//on one sample (no mini-batches used).
+	//Function returns loss.
+	float train_step(TrainingExample &ex);
+
+	//Training
+	void train();
+	
+	//Prediction 
+	struct PredictResult {
+		string category;
+		float value = 0;
+	};
+
+	vector<PredictResult> predict(string line, int n_predictions = 3);
+
+	//User interaction via console
+	void menu();
+
 };

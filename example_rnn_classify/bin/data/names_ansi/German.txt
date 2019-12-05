@@ -211,12 +211,7 @@ Greenberg
 Groos
 Gros
 Gross
-Gro?
-Gro?e
 Grosse
-Gro?el
-Gro?el
-Gro?er
 Grosser
 Grosz
 Grunewald
@@ -355,7 +350,6 @@ Kranz
 Kraus
 Krause
 Krauss
-Krau?
 Krebs
 Kroger
 Kron
@@ -557,7 +551,6 @@ Schulte
 Schultes
 Schultheis
 Schultheiss
-Schulthei?
 Schultz
 Schultze
 Schulz
@@ -663,7 +656,6 @@ Von ingersleben
 Vonnegut
 Von wegberg
 Voss
-Vo?
 Wagner
 Wagner
 Wahner
@@ -689,7 +681,6 @@ Weigand
 Weiman
 Weiner
 Weiss
-Wei?
 Welter
 Wendel
 Wendell
