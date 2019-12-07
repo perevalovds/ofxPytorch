@@ -224,10 +224,10 @@ int ofApp::categoryFromOutput(torch::Tensor output) {
 //--------------------------------------------------------------
 //Generate random example
 ofApp::TrainingExample ofApp::randomTrainingExample() {
-	int cat = torch::randint(n_categories, { 1 }).item<int>();
+	int cat = ofxPytorch::randint(n_categories);
 	auto &lines = category_lines[cat];
 
-	int i = torch::randint(lines.size(), { 1 }).item<int>();
+	int i = ofxPytorch::randint(lines.size());
 
 	TrainingExample ex;
 	ex.category = cat;

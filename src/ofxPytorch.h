@@ -15,3 +15,9 @@ into Visual Studio project's includes.
 //#define _CRT_SECURE_NO_WARNINGS
 #include <torch/torch.h>
 
+
+
+struct ofxPytorch {
+	static int randint(int n);	//0..n-1
+
+};
