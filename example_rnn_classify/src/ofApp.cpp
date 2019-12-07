@@ -203,8 +203,15 @@ torch::Tensor ofApp::lineToTensor(string line) {
 		}
 		tensor[i][0][index] = 1;
 	}
-
 	return tensor;
+
+	//Also, for more optical operations look at unsqueeze and scatter_ functions
+	//https://discuss.pytorch.org/t/what-kind-of-loss-is-better-to-use-in-multilabel-classification/32203/3
+	//(Python)
+	//labels = torch.tensor([1, 4, 1, 0, 5, 2])
+	//labels = labels.unsqueeze(0)
+	//target = torch.zeros(labels.size(0), 15).scatter_(1, labels, 1.)
+	
 }
 
 //--------------------------------------------------------------
