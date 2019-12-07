@@ -260,6 +260,8 @@ Function returns loss.
 	Return the output and loss"
 */
 float ofApp::train_step(TrainingExample &ex) {
+	//rnn->train();  //Enable training mode (must be used for dropout and others)
+
 
 	float learning_rate = 0.005; //"If you set this too high, it might explode.If too low, it might not learn"
 
@@ -300,6 +302,9 @@ float ofApp::train_step(TrainingExample &ex) {
 
 //--------------------------------------------------------------
 vector<ofApp::PredictResult> ofApp::predict(string line, int n_predictions) {
+	//rnn->eval();  //Enable working mode (must be used for dropout and others)
+
+	
 	cout << "Predict: '" << line << "'" << endl;
 	if (!checkWord(line)) {
 		cout << "Bad word, please use Latin symbols only" << endl;
