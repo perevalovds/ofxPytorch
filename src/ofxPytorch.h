@@ -18,6 +18,10 @@ into Visual Studio project's includes.
 
 
 struct ofxPytorch {
-	static int randint(int n);	//0..n-1
+	//returns uniform random int in 0..n-1
+	static int randint(int n);	
 
+	//returns index of maximal value
+	static int topk_index(torch::Tensor input);
+	
 };
