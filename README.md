@@ -15,9 +15,9 @@ to use PyTorch in realtime C++-based applications. Here we adopted it for using 
 * Addon must be compiled in **64 bit, Release mode** only (no Debug mode currently allowed)
 The reason: "on Windows, debug and release builds are not ABI-compatible" - https://pytorch.org/tutorials/advanced/cpp_frontend.htmlfor,
 so for Debug mode you need to use debug version of LibTorch.
+See 'Notes on debugging in Release mode' below.
 
 * Addon uses LibTorch 1.3.1 (downloaded from https://pytorch.org/get-started/locally/).
-
 
 
 ## Requirements
@@ -99,6 +99,23 @@ Other:
 * (Python) nn module documentation (NLLLoss and others) https://pytorch.org/docs/stable/nn.html
 
 * (Python) Pytorch ML tutorials: https://pytorch.org/tutorials/index.html
+
+## Notes on debugging in Release mode
+
+
+Because we are running the project with PyTorch in Release mode, 
+it can be hard to find the error, when program halts.
+To simplify this, you can use catching exceptions:
+
+~~~~
+try { 
+	//PyTorch code here
+} 
+
+catch (const std::exception& exc) { 
+	cout << "Exception in ...(you description of the code): " << exc.what() << endl; 
+} 
+~~~~
 
 ## Appendix: Visual Studio project setup for using LibTorch without oF
 
