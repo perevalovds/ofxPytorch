@@ -1,41 +1,22 @@
 #pragma once
 
 /*
-example_rnn_classify is a matured example of creating simple character-level RNN 
-which is capable to classify names by countries. This example doesn't uses optimizators,
-but rely on PyTorch's native autograd powerfullness.
+example_rnn_generation is a matured example of using RNN for 
+generating names conditioned by countries. It's pure deterministic generation,
+which uses first character and country to generate the rest symbols of name.
+This example doesn't uses optimizators, but rely on PyTorch's native autograd power.
 
 It's C++-ported and modified version of RNN's PyTorch (Python) tutorial  
-"NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
-https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
-https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
+"NLP From Scratch: Generating Names with a Character-Level RNN" by Sean Robertson
+https://pytorch.org/tutorials/intermediate/char_rnn_generation_tutorial.html
 
 The example includes interactive menu, 
 allowing you to train, save, load and test network.
-
-For example, 'Perevalov' is not in training database, but is correctly classified as 'Russian':
-
-```
-Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):
-        (Network is loaded)
->>> Perevalov
-Predict: 'Perevalov'
-     -0.312548  Russian
-     -2.70598  Greek
-     -2.94786  Czech
-```
-
-The technology of the example can be used for various text classification tasks,
-such as defining the language of the text and detecting blogger by article's title
-(see more info on this at original tutorial https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html)
 
 */
 
 #include "ofMain.h"
 #include "ofxPytorch.h"
-
-
-
 
 class ofApp : public ofBaseApp {
 
@@ -44,10 +25,11 @@ public:
 	void update();
 	void draw();
 
+
 	//train data
-	int n_categories;	//number of categories	
-	vector<string> categories;	//category's name
-	vector<vector<string> > category_lines;	//examples of names for category
+	int n_countries;	//number of categories	
+	vector<string> contries;	//category's name
+	vector<vector<string> > country_names;	//examples of names for category
 
 	//letters
 	int n_letters;

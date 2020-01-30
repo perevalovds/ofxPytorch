@@ -44,7 +44,7 @@ The ZIP has the following structure:
 ## Examples
 
 ### example_test
-It's minimalistic example to check PyTorch is linked properly. 
+It's a minimalistic example to check PyTorch is linked properly. 
 It's based on https://pytorch.org/cppdocs/installing.html#minimal-example
 The example creates a random tensor, prints it in Console and saves to **data** folder as **saved.tensor** file.
 This example demonstrates the way for using files made in oF project in your Python's Pytorch code, 
@@ -52,7 +52,7 @@ and back, use your Python's Pytorch data in the oF project!
 (Note, actually **saved.tensor** is ZIP archive, which you can explore).
 
 ### example_rnn_classify
-This is matured example of creating simple character-level RNN 
+This is a matured example of creating simple character-level RNN 
 which is capable to classify names by countries. This example doesn't uses optimizators,
 but rely on PyTorch's native autograd powerfullness.
 
@@ -61,7 +61,7 @@ It's C++-ported and modified version of RNN's PyTorch (Python) tutorial
 https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
 
-Our implementation of the example includes interactive menu, 
+The example includes interactive menu, 
 allowing you to train, save, load and test network.
 
 For example, 'Perevalov' is not in training database, but is correctly classified as 'Russian':
@@ -80,6 +80,15 @@ The technology of the example can be used for various text classification tasks,
 such as defining the language of the text and detecting blogger by article's title
 (see more info on this at original tutorial https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html)
 
+
+### example_rnn_generation
+This is a matured example of using RNN for 
+generating names conditioned by countries. It's pure deterministic generation,
+which uses first character and country to generate the rest symbols of name.
+This example doesn't uses optimizators, but rely on PyTorch's native autograd power.
+
+The example includes interactive menu, 
+allowing you to train, save, load and test network.
 
 ## PyTorch C++ documentation 
 
