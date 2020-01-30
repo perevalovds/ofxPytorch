@@ -12,7 +12,6 @@ into Visual Studio project's includes.
 
 #include "ofMain.h"
 
-//#define _CRT_SECURE_NO_WARNINGS
 #include <torch/torch.h>
 
 
@@ -43,4 +42,4 @@ protected:
 	string alphabet_;	//used alphabet
 	int n_ = 0;			//alphabet size
 	vector<int> map_;	//map a char to index in alphabet, if no mapping, then -1
-}
+};
