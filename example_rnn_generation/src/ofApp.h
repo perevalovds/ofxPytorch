@@ -15,6 +15,9 @@ allowing you to train, save, load and test network.
 
 */
 
+
+//--------------- WORK IN PROGRESS --------------------------
+
 #include "ofMain.h"
 #include "ofxPytorch.h"
 
@@ -27,9 +30,9 @@ public:
 
 
 	//train data
-	int n_countries;	//number of categories	
-	vector<string> contries;	//category's name
-	vector<vector<string> > country_names;	//examples of names for category
+	int n_categories;	//number of categories	
+	vector<string> categories;	//category's name
+	vector<vector<string> > category_lines;	//examples of names for category
 
 	//letters
 	int n_letters;

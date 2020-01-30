@@ -8,6 +8,10 @@ std::shared_ptr<RNN> rnn;
 //holder for network state text
 string state_message = "Network is randomly inited. You can load trained network from a file";
 
+
+//--------------- WORK IN PROGRESS --------------------------
+
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	cout << "Example of creating simple character-level RNN which is capable to classify names" << endl;
@@ -187,7 +191,7 @@ bool ofApp::checkWord(string line) {
 //or an array of one-hot letter vectors
 torch::Tensor ofApp::lineToTensor(string line) {
 	
-	
+	return torch::Tensor();//TODO
 }
 
 //--------------------------------------------------------------
