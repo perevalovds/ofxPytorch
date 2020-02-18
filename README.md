@@ -60,6 +60,8 @@ It's C++-ported and modified version of RNN's PyTorch (Python) tutorial
 "NLP From Scratch: Classifying Names with a Character-Level RNN" by Sean Robertson
 https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html
 https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification
+(Note: comparing the original tutorial, in the current implementation 
+"end of line" symbol is added after each word)
 
 The example includes interactive menu, 
 allowing you to train, save, load and test network.
@@ -69,7 +71,7 @@ For example, 'Perevalov' is not in training database, but is correctly classifie
 ```
 Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):
         (Network is loaded)
->>> Perevalov
+>>>> Perevalov
 Predict: 'Perevalov'
      -0.312548  Russian
      -2.70598  Greek
