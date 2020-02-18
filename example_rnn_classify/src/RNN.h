@@ -20,7 +20,6 @@
 // softmax
 // output   hidden
 
-typedef std::tuple<torch::Tensor, torch::Tensor> TensorPair;
 
 struct RNN : torch::nn::Module {
 	//We need to declare modules in this way and create in constructor for reference-type using
@@ -39,9 +38,6 @@ struct RNN : torch::nn::Module {
 		i2h = register_module("i2h", torch::nn::Linear(input_size + hidden_size, hidden_size));
 		i2o = register_module("i2o", torch::nn::Linear(input_size + hidden_size, output_size));
 
-		//should we register buffer?
-		//hidden = register_buffer("hidden", torch::zeros({ 1, hidden_size });
-		//initHidden();
 	}
 
 	// Implement the RNN algorithm.

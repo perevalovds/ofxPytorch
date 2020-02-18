@@ -23,7 +23,9 @@ void ofApp::setup(){
 	//https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification/data.py
 	//https://kite.com/python/examples/288/string-get-all-ascii-letters
 	all_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'-";
+	end_of_line = ".";
 	n_letters = all_letters.length();
+	alphabet.setup(all_letters);
 
 	//--------------------------------------------------------------
 	//Reading train data - examples of names for different countries
@@ -48,6 +50,11 @@ void ofApp::setup(){
 				cout << "Error in " << dir.getName(i) << ", bad word " << k << " '" << line << "'" << endl;
 				error = true;
 			}
+
+			//Add "end of line" symbol in the end of line to give to know the network 
+			//what it's end of word
+			//(In original tutorial it's not done)
+			line += end_of_line;
 			category_lines[i].push_back(line);
 		}
 		cout << "    " << i + 1 << ": " << categories[i] << " " << category_lines[i].size() << endl;
@@ -157,9 +164,15 @@ void ofApp::menu() {
 		if (key == "4") {
 			cout << "Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):" << endl;
 			cout << "        (" << state_message << ")" << endl;
-			cout << ">>> ";
+			cout << ">>>> ";
 			string line;
 			cin >> line;
+			if (line.empty()) continue;
+			//adding end of line symbol 
+			if (line[int(line.length()) - 1] != end_of_line[0]) {
+				line += end_of_line;
+			}
+
 			int n_predictions = 3;
 			predict(line, n_predictions);
 			//This function returns list of results, but we ignoring it here,
@@ -192,33 +205,16 @@ bool ofApp::checkWord(string line) {
 //--------------------------------------------------------------
 //Turn a line into a <line_length x 1 x n_letters>,
 //or an array of one-hot letter vectors
-//Note: see ofxPyStringOnehotGenerator class for faster implementation
 
 torch::Tensor ofApp::lineToTensor(string line) {
-	torch::Tensor tensor = torch::zeros({ int(line.length()), 1, n_letters });
-	for (int i = 0; i < line.length(); i++) {
-		size_t index = all_letters.find_first_of(line[i]);
-		//cout << "index " << index << endl;
-		if (index == string::npos) {
-			cout << "Error, bad symbol in " << line << endl;
-			OF_EXIT_APP(0);
-		}
-		tensor[i][0][index] = 1;
-	}
-	return tensor;
-
-	//Also, for more optimal operations look at unsqueeze and scatter_ functions
-	//https://discuss.pytorch.org/t/what-kind-of-loss-is-better-to-use-in-multilabel-classification/32203/3
-	//(Python)
-	//labels = torch.tensor([1, 4, 1, 0, 5, 2])
-	//labels = labels.unsqueeze(0)
-	//target = torch.zeros(labels.size(0), 15).scatter_(1, labels, 1.)
-	
+	return alphabet.string_to_onehot(line);
 }
 
 //--------------------------------------------------------------
 //Interpret the output of the network, which we know to be a likelihood of each category
 int ofApp::categoryFromOutput(torch::Tensor output) {
+	return ofxPytorch::topk_index(output);
+	/*
 	//Getting best result
 	int count = 1;
 	std::tuple<torch::Tensor, torch::Tensor> result = output.topk(count);
@@ -227,7 +223,7 @@ int ofApp::categoryFromOutput(torch::Tensor output) {
 	//cout << "categoryFromOutput " << endl << std::get<0>(result) << " " << std::get<1>(result) << endl;
 	torch::Tensor index = std::get<1>(result);
 	return index.item<float>();
-
+	*/
 }
 
 //--------------------------------------------------------------
