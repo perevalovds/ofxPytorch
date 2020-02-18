@@ -43,3 +43,11 @@ protected:
 	int n_ = 0;			//alphabet size
 	vector<int> map_;	//map a char to index in alphabet, if no mapping, then -1
 };
+
+
+//Also, for more optimal operations look at unsqueeze and scatter_ functions
+//https://discuss.pytorch.org/t/what-kind-of-loss-is-better-to-use-in-multilabel-classification/32203/3
+//(Python)
+//labels = torch.tensor([1, 4, 1, 0, 5, 2])
+//labels = labels.unsqueeze(0)
+//target = torch.zeros(labels.size(0), 15).scatter_(1, labels, 1.)
