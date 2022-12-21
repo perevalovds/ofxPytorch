@@ -16,8 +16,6 @@ allowing you to train, save, load and test network.
 */
 
 
-//--------------- WORK IN PROGRESS --------------------------
-
 #include "ofMain.h"
 #include "ofxPytorch.h"
 
@@ -25,8 +23,11 @@ class ofApp : public ofBaseApp {
 
 public:
 	void setup();
-	void update();
-	void draw();
+
+	//letters
+	int n_letters;
+	string all_letters;
+	ofxPyStringOnehotGenerator alphabet;	//converter of symbols to one-hot vectors
 
 
 	//train data
@@ -34,9 +35,6 @@ public:
 	vector<string> categories;	//category's name
 	vector<vector<string> > category_lines;	//examples of names for category
 
-	//letters
-	int n_letters;
-	string all_letters;
 
 	//number of hidden states
 	int n_hidden;
@@ -44,13 +42,6 @@ public:
 
 	//Check if word is correct (contains only registered symbols)
 	bool checkWord(string line);
-
-	//Turn a line into a <line_length x 1 x n_letters>,
-	//or an array of one-hot letter vectors
-	torch::Tensor lineToTensor(string line);
-
-	//Interpret the output of the network, which we know to be a likelihood of each category
-	int categoryFromOutput(torch::Tensor output); 
 	
 	//Generate random example
 	struct TrainingExample {

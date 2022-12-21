@@ -9,19 +9,14 @@ std::shared_ptr<RNN> rnn;
 string state_message = "Network is randomly inited. You can load trained network from a file";
 
 
-//--------------- WORK IN PROGRESS --------------------------
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
-	cout << "Example of creating simple character-level RNN which is capable to classify names" << endl;
+	cout << "Example of character-level RNN which generates names conditioned by country" << endl;
 
-	//Construct list of all letters
-	//https://github.com/spro/practical-pytorch/blob/master/char-rnn-classification/data.py
-	//https://kite.com/python/examples/288/string-get-all-ascii-letters
 	all_letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ .,;'-";
 	n_letters = all_letters.length();
-
+	alphabet.setup(all_letters);
+		
 	//--------------------------------------------------------------
 	//Reading train data - examples of names for different countries
 	//--------------------------------------------------------------
@@ -74,47 +69,8 @@ void ofApp::setup(){
 	//Here are various tests - uncomment to test what you want, and comment "menu();" above
 	//-----------------------------------------------------------
 	//Test lineToTensor
-	//auto test = lineToTensor("abc");
-	//cout << "lineToTensor test " << endl << test << endl;
-
-	//Test processing one symbol
-	/*cout << "Test processing one symbol" << endl;
-	auto input = lineToTensor("Albert");
-	auto hidden = rnn->initHidden();	
-	auto pair = rnn->forward(input[0], hidden);
-	auto splitted = pair.split_with_sizes({ rnn->output_size, rnn->hidden_size }, 1);
-	auto output = splitted[0];
-	hidden = splitted[1];
-	cout << "output " << output << endl;
-	cout << "hidden " << hidden << endl;
-	cout << "result: " << categoryFromOutput(output) << endl;
-	*/
-
-	//Test generating random example
-	/*
-	cout << "Generating example..." << endl;
-	TrainingExample ex = randomTrainingExample();
-	cout << "example: " << categories[ex.category] << " " << ex.line << endl;
-	//cout << ex.category_tensor << endl;
-	//cout << ex.line_tensor << endl;
-	*/
-
-	//Test train step
-	/*
-	cout << "Train step..." << endl;
-	TrainingExample ex = randomTrainingExample();
-	float loss = train_step(ex);
-	cout << "  loss " << loss << endl;
-	*/
-
-	//Train
-	/*
-	cout << "Training..." << endl;
-	train();
-	*/
-
-	//Predict
-	//auto items = predict("Kabakov");
+	//auto test = alphabet.string_to_onehot("abc");
+	//cout << "string_to_onehot test " << endl << test << endl;
 }
 
 
@@ -127,7 +83,7 @@ void ofApp::menu() {
 		cout << "        1 - train network (you can repeat it to train incrementally)" << endl;
 		cout << "        2 - save network" << endl;
 		cout << "        3 - load network" << endl;
-		cout << "        4 - predict (enter a name to predict its country)" << endl;
+		cout << "        4 - predict (enter a country and a first symbol generate a name)" << endl;
 		cout << "        5 - exit" << endl;
 		cout << "        (" << state_message << ")" << endl;
 		cout << ">>> ";
@@ -152,7 +108,7 @@ void ofApp::menu() {
 			state_message = "Network is loaded";
 		}
 		if (key == "4") {
-			cout << "Type name (for example: Smith, Kabakov, Mendoza, see more in 'names_ansi' folder):" << endl;
+			cout << "Type country and first letter separated by space (for example: 'Russian R', 'Spanish P', see more in 'names_ansi' folder):" << endl;
 			cout << "        (" << state_message << ")" << endl;
 			cout << ">>> ";
 			string line;
@@ -187,28 +143,6 @@ bool ofApp::checkWord(string line) {
 }
 
 //--------------------------------------------------------------
-//Turn a line into a <line_length x 1 x n_letters>,
-//or an array of one-hot letter vectors
-torch::Tensor ofApp::lineToTensor(string line) {
-	
-	return torch::Tensor();//TODO
-}
-
-//--------------------------------------------------------------
-//Interpret the output of the network, which we know to be a likelihood of each category
-int ofApp::categoryFromOutput(torch::Tensor output) {
-	//Getting best result
-	int count = 1;
-	std::tuple<torch::Tensor, torch::Tensor> result = output.topk(count);
-	
-	//result[0] holds value, result[1] holds index
-	//cout << "categoryFromOutput " << endl << std::get<0>(result) << " " << std::get<1>(result) << endl;
-	torch::Tensor index = std::get<1>(result);
-	return index.item<float>();
-
-}
-
-//--------------------------------------------------------------
 //Generate random example
 ofApp::TrainingExample ofApp::randomTrainingExample() {
 	int cat = ofxPytorch::randint(n_categories);
@@ -220,25 +154,16 @@ ofApp::TrainingExample ofApp::randomTrainingExample() {
 	ex.category = cat;
 	ex.line = lines[i];
 	ex.category_tensor = torch::tensor({ cat }, torch::kLong);
-	ex.line_tensor = lineToTensor(ex.line);
+	ex.line_tensor = alphabet.string_to_onehot(ex.line);
 
 	return ex;
 }
 
 //--------------------------------------------------------------
-/*
-Training is implemented directly, without optimizers
-Function returns loss.
 
-"Each loop of training will:
-	Create input and target tensors
-	Create a zeroed initial hidden state
-	Read each letter in and
-		Keep hidden state for next letter
-	Compare final output to target
-	Back-propagate
-	Return the output and loss"
-*/
+//Training is implemented directly, without optimizers
+//Function returns loss.
+
 float ofApp::train_step(TrainingExample &ex) {
 	//rnn->train();  //Enable training mode (must be used for dropout and others)
 
@@ -291,7 +216,7 @@ vector<ofApp::PredictResult> ofApp::predict(string line, int n_predictions) {
 		return vector<ofApp::PredictResult>();
 	}
 
-	auto line_tensor = lineToTensor(line);
+	auto line_tensor = alphabet.string_to_onehot(line);
 
 	rnn->zero_grad();
 	torch::Tensor output;
@@ -349,16 +274,6 @@ void ofApp::train() {
 			current_loss = 0;
 		}
 	}
-}
-
-//--------------------------------------------------------------
-void ofApp::update(){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::draw(){
-
 }
 
 //--------------------------------------------------------------
